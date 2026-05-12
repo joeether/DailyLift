@@ -27,7 +27,7 @@ using (var scope = app.Services.CreateScope())
 
     db.Database.Migrate();
 
-    //DbInitializer.Seed(db);
+    DbInitializer.Seed(db);
 }
 
 // Configure the HTTP request pipeline.
