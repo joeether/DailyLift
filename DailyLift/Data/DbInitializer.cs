@@ -6,9 +6,6 @@ namespace DailyLift.Data
     {
         public static void Seed(AppDbContext context)
         {
-context.LiftItems.RemoveRange(context.LiftItems);
-
-context.SaveChanges();
             if (context.LiftItems.Any())
             {
                 return;
