@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-  <Content Include="DataFiles\lifts.csv">
+  <Content Include="DataFiles/lifts.csv">
     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
   </Content>
 </ItemGroup>
