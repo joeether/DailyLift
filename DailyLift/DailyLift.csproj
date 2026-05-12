@@ -17,9 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-  <Content Include="DataFiles/lifts.csv">
-    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-  </Content>
+  <None Update="DataFiles/lifts.csv">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
 </ItemGroup>
 
 </Project>
