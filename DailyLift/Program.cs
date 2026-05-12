@@ -1,6 +1,8 @@
+using Blazored.LocalStorage;
 using DailyLift.Components;
-using Microsoft.EntityFrameworkCore;
 using DailyLift.Data;
+using DailyLift.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,12 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=dailylift.db"));
+
+builder.Services.AddScoped<DailyLiftService>();
+
+builder.Services.AddBlazoredLocalStorage();
+
+builder.Services.AddScoped<FavoritesService>();
 
 var app = builder.Build();
 

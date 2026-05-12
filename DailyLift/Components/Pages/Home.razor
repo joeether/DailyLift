@@ -1,7 +1,135 @@
 ﻿@page "/"
+@using DailyLift.Data
+@using DailyLift.Models
+@using DailyLift.Services
+@inject AppDbContext Db
+@inject DailyLift.Services.DailyLiftService LiftService
+@inject FavoritesService FavoritesService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Daily Lift</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="hero-section">
 
-Welcome to your new app.
+    <h1>☀️ Daily Lift</h1>
+
+    <p class="hero-text">
+        A tiny spark of humor, inspiration,
+        and weirdness for your day.
+    </p>
+
+</div>
+
+@if (todayLift == null)
+{
+    <p>Loading today's lift...</p>
+}
+else
+{
+    <select class="form-select mt-3"
+            @bind="selectedCategory">
+
+        @foreach (var category in categories)
+        {
+            <option value="@category">
+                @category
+            </option>
+        }
+
+    </select>
+
+    <div class="lift-card">
+
+        <div class="lift-category">
+            @todayLift.Category
+        </div>
+
+        <div class="lift-title">
+            @todayLift.Title
+        </div>
+
+        <div class="lift-content">
+            @todayLift.Content
+        </div>
+
+        <button class="favorite-button"
+                @onclick="ToggleFavorite">
+
+            @(isFavorite ? "⭐ Favorited" : "☆ Favorite")
+
+        </button>
+
+    </div>
+
+    <button class="new-lift-button"
+            @onclick="LoadNewLift">
+        ✨ New Lift
+    </button>
+}
+
+@code {
+
+    private LiftItem? todayLift;
+
+    private string selectedCategory = "All";
+
+    private List<string> categories = new();
+
+    private bool isFavorite;
+
+    protected override async Task OnInitializedAsync()
+    {
+        todayLift = LiftService.GetTodaysLift();
+
+        categories = Db.LiftItems
+            .Select(x => x.Category)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToList();
+
+        categories.Insert(0, "All");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && todayLift != null)
+        {
+            isFavorite = await FavoritesService
+                .IsFavoriteAsync(todayLift.Id);
+
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadNewLift()
+    {
+        todayLift = LiftService
+            .GetRandomLift(selectedCategory);
+
+        if (todayLift != null)
+        {
+            isFavorite = await FavoritesService
+                .IsFavoriteAsync(todayLift.Id);
+        }
+    }
+
+    private async Task ToggleFavorite()
+    {
+        if (todayLift == null)
+            return;
+
+        if (isFavorite)
+        {
+            await FavoritesService
+                .RemoveFavoriteAsync(todayLift.Id);
+
+            isFavorite = false;
+        }
+        else
+        {
+            await FavoritesService
+                .AddFavoriteAsync(todayLift.Id);
+
+            isFavorite = true;
+        }
+    }
+}
